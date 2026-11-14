@@ -90,6 +90,12 @@ No new always-running VM or automatic account containment is required. The colle
 
 The legacy nonproduction exporter is retained only because the durable collector reuses its projection code. It is not the production delivery method. [Source map](docs/SOURCE-MAP.md)
 
+## Operations and Recovery Collection
+
+The actual platform now also sends selected recovery, terminal email-delivery and recovery-storage metadata through an independent collector. One expected healthy event matched all eleven fields in the hub; two stored copies count as one distinct event, and new operations-specific alerts remain unactivated.
+
+[Sources, diagram, query, acceptance and limits](docs/OPERATIONS-COLLECTION.md) explains this later extension. Native Entra audit and interactive sign-in logs already arrive through a separate route; this does not imply workload-sign-in collection or complete identity-threat detections.
+
 ## Proof It Works
 
 ### 1. Selected original source tests run offline

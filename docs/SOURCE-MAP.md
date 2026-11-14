@@ -17,3 +17,7 @@ Live resource/subscription/principal names and the environment-setting label are
 Three selected Function registration modules are included under `functions/`; unrelated HTTP handlers and the complete host are not. Original test filesystem paths are adapted to this repository, and `examples/nonproduction-isolation.json` contains only the five relevant disabled controls.
 
 The extracted Azure adapter is not a complete Function host. Cloud execution additionally needs reviewed settings, exact identity permissions, private state access, a preexisting table/DCR and coordinated commissioning. Do not point the public examples at a live system merely to reproduce screenshots.
+
+## Later operations extension
+
+[Operations collection](OPERATIONS-COLLECTION.md) describes the November 14 accepted extension. The public HTTP source snapshot predates the shared-engine extraction used by that extension; it remains a runnable selected snapshot, not a byte-for-byte copy of the latest complete production host. No private operations bindings, source records or settings were copied into this repository.

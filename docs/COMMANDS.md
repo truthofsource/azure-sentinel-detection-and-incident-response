@@ -64,3 +64,7 @@ node scripts/capture_demo.mjs
 ```
 
 Run the demo generator first. These commands install/use a local Chromium browser and capture only the fictional page; external requests are blocked. They do not sign in to Azure.
+
+## Selected operations investigation
+
+The read-only KQL and ClickOps path are in [Operations collection](OPERATIONS-COLLECTION.md). Use an existing authorized security-workspace session; do not run a deployment, reset a checkpoint, force a backup or send an email to reproduce that observation. The local demo does not simulate this later hosted collector.

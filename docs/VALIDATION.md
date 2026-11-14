@@ -25,3 +25,7 @@ Two other New access-change incidents matched expected collector grants; this su
 ## What is not claimed
 
 No whole-platform detection coverage, complete audit, losslessness, exactly-once ledger, long-term SLA, compliance certification, representative monthly cost, automatic containment or fresh public Azure deployment. Screenshots contain fictional local evidence only; private source events, tenant/resource IDs, credentials and incident contents are excluded.
+
+## November 14 operations extension
+
+The actual platform's operations acceptance is recorded separately in [Operations collection](OPERATIONS-COLLECTION.md). One synthetic nonproduction event survived restart testing without another copy; the production healthy cohort matched all eleven fields as two rows/one distinct ID/718 billed row bytes. This is dated hosted evidence, not a rerun by the local fixture model. New operations detectors remain unactivated, negative unapproved-source identity probing was not exercised, and representative cost/failure observations remain open. Existing local test counts still describe only their listed source/model scope.

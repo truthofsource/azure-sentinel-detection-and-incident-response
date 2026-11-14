@@ -31,3 +31,9 @@ The existing Azure Activity/identity collection and role-assignment rule are sep
 ## Public example versus live bindings
 
 Resource names, subscriptions, principal IDs and the environment-setting label are replaced with examples. The selected behavioral modules and original tests preserve the implementation pattern. This repository does not contain the application's token middleware, complete Function host, private network route, deployed secrets or production settings.
+
+## Separate operations and native identity paths
+
+The later operations collector uses its own table, DCR and leased state. It selects existing recovery, terminal email and recovery-storage metadata; it does not copy the full operational workspace. [The accepted extension](OPERATIONS-COLLECTION.md) documents its source filters, eleven fields, read-only query and limits.
+
+Native `AuditLogs` and interactive `SigninLogs` already reach the hub through tenant diagnostics. The November 14 seven-day sample contained 34 audit and 20 interactive sign-in rows. Other inspected sign-in categories were not enabled and had no rows. Existing table names alone were not treated as collection proof. No new identity detector was installed by this verification.

@@ -13,3 +13,7 @@
 | Old release verifier blocked promotion | Add the required successful dependency-security publisher job to the exact-artifact validation. | Repair the source guard and prove the reviewed artifact; do not bypass the failed check. |
 
 The root cause of the two generic processing failures was not established. The project records recovery, not an invented network repair or permanent-resolution claim.
+
+## Private paths, timestamps and duplicate evidence
+
+An installed package is not a working host: private Functions storage still required its intended Blob/Queue network path. Identical source/package publication succeeded after a bounded path repair, followed by endpoint and DNS cleanup. Exact readback also found a normalized UTC string that the strict parser rejected; a retained canonical value repaired the configuration without resetting an established checkpoint. [Operations collection](OPERATIONS-COLLECTION.md) separates the proved outcome from the original deployment's untraced internal cause and the stored duplicate's untraced cause.
