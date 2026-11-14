@@ -1,0 +1,17 @@
+let ArrivalEnd=bin(now(),5m)-5m;
+let ArrivalStart=ArrivalEnd-5m;
+CareOpsSecurityHttp_CL
+| where TimeGenerated >= now()-1d and TimeGenerated < now()+2m
+| where Schema == "careops.security.http.v1" and Environment == "production"
+| where SourceResourceId =~ "__SOURCE_RESOURCE_ID__"
+| where EventId matches regex @"^[a-f0-9]{64}$"
+| where FunctionName matches regex @"^[a-zA-Z][a-zA-Z0-9_]{0,79}$"
+| extend Arrival=ingestion_time()
+| summarize arg_min(Arrival,*) by EventId
+| where tolong(Status) == 503 and EventKind == "http_service_unavailable"
+| extend SourceResourceId=tolower(SourceResourceId), WindowStart=bin(TimeGenerated,5m)
+| summarize TimeGenerated=max(TimeGenerated), LatestDistinctArrival=max(Arrival), ObservedInvocations=count(), Unauthorized=countif(tolong(Status)==401), Forbidden=countif(tolong(Status)==403), Unavailable=countif(tolong(Status)==503), FunctionsShown=make_set(FunctionName,10) by SourceResourceId, WindowStart
+| where ObservedInvocations >= 3 and LatestDistinctArrival >= ArrivalStart and LatestDistinctArrival < ArrivalEnd
+| extend WindowEnd=WindowStart+5m, FunctionsShown=tostring(FunctionsShown)
+| extend DetectionKey=hash_sha256(strcat(SourceResourceId,"|service_unavailable|",tostring(WindowStart)))
+| project TimeGenerated, SourceResourceId, DetectionKey, WindowStart, WindowEnd, LatestDistinctArrival, ObservedInvocations, Unauthorized, Forbidden, Unavailable, FunctionsShown

@@ -1,0 +1,9 @@
+{
+  "api": {
+    "CAREOPS_SECURITY_EVENT_LOGGING_ENABLED": "false",
+    "CAREOPS_SECURITY_EXPORT_ENABLED": "false",
+    "CAREOPS_SECURITY_DURABLE_ENABLED": "false",
+    "AzureWebJobs.securityHttpDelivery.Disabled": "true",
+    "AzureWebJobs.securityHttpExport.Disabled": "true"
+  }
+}

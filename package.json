@@ -1,0 +1,23 @@
+{
+  "name": "azure-sentinel-detection-and-incident-response",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Application security collection, Sentinel detections and incident response case study",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test dist/reference/*.test.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@azure/functions": "4.16.1",
+    "@azure/identity": "4.14.1",
+    "@azure/storage-blob": "12.33.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.0",
+    "typescript": "5.9.3",
+    "playwright": "1.63.0"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "checkedUtc": "2026-11-14T14:23:41.707849+00:00",
+  "selectedOriginalTypeScriptTests": {
+    "passed": 46,
+    "failed": 0,
+    "scope": "offline source and adapter seams"
+  },
+  "originalPythonPlanContracts": {
+    "passed": 6,
+    "failed": 0
+  },
+  "pythonModelTests": {
+    "passed": 7,
+    "failed": 0,
+    "fixtureScenariosWithinTests": 12
+  },
+  "terraform": {
+    "format": "passed",
+    "validate": "passed",
+    "mockPlans": 2,
+    "cloudApply": false
+  },
+  "screenshots": {
+    "scope": "fictional local model",
+    "browserEvidence": "out/browser-review.json"
+  },
+  "hostedGitHubActionsRun": false,
+  "azureQueriesOrWritesForPublicProject": false,
+  "historicalCloudAcceptance": "See docs/VALIDATION.md; not a new public deployment",
+  "browser": {
+    "passed": true,
+    "views": 6,
+    "externalRequests": 0,
+    "screenshots": 4,
+    "scope": "fictional local demonstration; all three sections at desktop/mobile sizes"
+  }
+}

@@ -1,0 +1,14 @@
+let Accepted=AppTraces
+| where TimeGenerated between (ago(30m)..ago(15m)) and _ResourceId =~ "__SOURCE_RESOURCE_ID__"
+| extend D=parse_json(Message)
+| where tostring(D.schema)=="careops.security.delivery.v1" and tolong(D.accepted)>0
+| summarize AcceptedReports=count();
+let Arrived=workspace("__SECURITY_WORKSPACE_ID__").CareOpsSecurityHttp_CL
+| where TimeGenerated > ago(1d)
+| where SourceResourceId =~ "__SOURCE_RESOURCE_ID__" and Environment=="production" and Schema=="careops.security.http.v1"
+| where ingestion_time() > ago(30m)
+| summarize ArrivalRows=count();
+Accepted | extend JoinKey=1
+| join kind=inner (Arrived | extend JoinKey=1) on JoinKey
+| where AcceptedReports > 0 and ArrivalRows == 0
+| project TimeGenerated=now(), AcceptedReports, ArrivalRows

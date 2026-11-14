@@ -1,0 +1,13 @@
+let Latest=AppTraces
+| where TimeGenerated > ago(45m) and _ResourceId =~ "__SOURCE_RESOURCE_ID__"
+| extend D=parse_json(Message)
+| where tostring(D.schema)=="careops.security.delivery.v1"
+| where tostring(D.outcome)!="busy"
+| summarize arg_max(TimeGenerated,D)
+| project LastHeartbeat=TimeGenerated, Outcome=tostring(D.outcome), CheckpointAgeSeconds=tolong(D.checkpointAgeSeconds), Pending=tolong(D.pending), SafeCode=tostring(D.code);
+datatable(Expected:int)[1]
+| extend JoinKey=1
+| join kind=leftouter (Latest | extend JoinKey=1) on JoinKey
+| extend MissingHeartbeat=isnull(LastHeartbeat) or LastHeartbeat < ago(15m), Stalled=CheckpointAgeSeconds > 1200, Blocked=Outcome in ("blocked","failed")
+| where MissingHeartbeat or Stalled or Blocked
+| project TimeGenerated=now(), MissingHeartbeat, Stalled, Blocked, LastHeartbeat, Outcome, CheckpointAgeSeconds, Pending, SafeCode

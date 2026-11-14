@@ -1,0 +1,275 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "sourceSubscriptionId": {
+      "type": "string",
+      "allowedValues": [
+        "22222222-2222-4222-8222-222222222222"
+      ]
+    },
+    "sourceResourceGroup": {
+      "type": "string",
+      "allowedValues": [
+        "rg-application-nonproduction-eastus2"
+      ]
+    },
+    "sourceComponentName": {
+      "type": "string",
+      "allowedValues": [
+        "appi-application-nonproduction-eastus2-001"
+      ]
+    },
+    "exporterPrincipalId": {
+      "type": "string",
+      "allowedValues": [
+        "66666666-6666-4666-8666-666666666666"
+      ]
+    },
+    "securityWorkspaceName": {
+      "type": "string",
+      "allowedValues": [
+        "law-security-hub-eastus2-001"
+      ]
+    },
+    "location": {
+      "type": "string",
+      "allowedValues": [
+        "eastus2"
+      ]
+    },
+    "includeFoundation": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Create the table and component Reader on the first deployment. False completes only the DCR/publisher after separately verifying the existing foundation."
+      }
+    }
+  },
+  "variables": {
+    "table": "CareOpsSecurityHttp_CL",
+    "rule": "dcr-careops-http-np",
+    "sourceId": "[resourceId(parameters('sourceSubscriptionId'), parameters('sourceResourceGroup'), 'Microsoft.Insights/components', parameters('sourceComponentName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/tables",
+      "apiVersion": "2022-10-01",
+      "name": "[concat(parameters('securityWorkspaceName'), '/', variables('table'))]",
+      "properties": {
+        "plan": "Analytics",
+        "retentionInDays": 90,
+        "totalRetentionInDays": 90,
+        "schema": {
+          "name": "[variables('table')]",
+          "columns": [
+            {
+              "name": "TimeGenerated",
+              "type": "dateTime",
+              "description": "Approved CareOps security-event TimeGenerated metadata."
+            },
+            {
+              "name": "EventId",
+              "type": "string",
+              "description": "Approved CareOps security-event EventId metadata."
+            },
+            {
+              "name": "Schema",
+              "type": "string",
+              "description": "Approved CareOps security-event Schema metadata."
+            },
+            {
+              "name": "SourceResourceId",
+              "type": "string",
+              "description": "Approved CareOps security-event SourceResourceId metadata."
+            },
+            {
+              "name": "InvocationId",
+              "type": "string",
+              "description": "Approved CareOps security-event InvocationId metadata."
+            },
+            {
+              "name": "FunctionName",
+              "type": "string",
+              "description": "Approved CareOps security-event FunctionName metadata."
+            },
+            {
+              "name": "Method",
+              "type": "string",
+              "description": "Approved CareOps security-event Method metadata."
+            },
+            {
+              "name": "Environment",
+              "type": "string",
+              "description": "Approved CareOps security-event Environment metadata."
+            },
+            {
+              "name": "EventKind",
+              "type": "string",
+              "description": "Approved CareOps security-event EventKind metadata."
+            },
+            {
+              "name": "Status",
+              "type": "int",
+              "description": "Approved CareOps security-event Status metadata."
+            }
+          ]
+        }
+      },
+      "condition": "[parameters('includeFoundation')]"
+    },
+    {
+      "type": "Microsoft.Insights/dataCollectionRules",
+      "apiVersion": "2024-03-11",
+      "name": "[variables('rule')]",
+      "location": "[parameters('location')]",
+      "kind": "Direct",
+      "dependsOn": [
+        "[resourceId('Microsoft.OperationalInsights/workspaces/tables',parameters('securityWorkspaceName'),variables('table'))]"
+      ],
+      "properties": {
+        "streamDeclarations": {
+          "Custom-CareOpsSecurityHttp": {
+            "columns": [
+              {
+                "name": "TimeGenerated",
+                "type": "datetime"
+              },
+              {
+                "name": "EventId",
+                "type": "string"
+              },
+              {
+                "name": "Schema",
+                "type": "string"
+              },
+              {
+                "name": "SourceResourceId",
+                "type": "string"
+              },
+              {
+                "name": "InvocationId",
+                "type": "string"
+              },
+              {
+                "name": "FunctionName",
+                "type": "string"
+              },
+              {
+                "name": "Method",
+                "type": "string"
+              },
+              {
+                "name": "Environment",
+                "type": "string"
+              },
+              {
+                "name": "EventKind",
+                "type": "string"
+              },
+              {
+                "name": "Status",
+                "type": "int"
+              }
+            ]
+          }
+        },
+        "destinations": {
+          "logAnalytics": [
+            {
+              "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('securityWorkspaceName'))]",
+              "name": "security"
+            }
+          ]
+        },
+        "dataFlows": [
+          {
+            "streams": [
+              "Custom-CareOpsSecurityHttp"
+            ],
+            "destinations": [
+              "security"
+            ],
+            "outputStream": "Custom-CareOpsSecurityHttp_CL",
+            "transformKql": "[concat('source | where Schema == \"careops.security.http.v1\" and Environment == \"nonproduction\" and SourceResourceId =~ \"', variables('sourceId'), '\" | where (tolong(Status) in (401, 403) and EventKind == \"http_access_denied\") or (tolong(Status) == 503 and EventKind == \"http_service_unavailable\") | project TimeGenerated, EventId, Schema, SourceResourceId, InvocationId, FunctionName, Method, Environment, EventKind, Status')]"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "name": "[guid(resourceId('Microsoft.Insights/dataCollectionRules',variables('rule')),parameters('exporterPrincipalId'),'publisher')]",
+      "scope": "[resourceId('Microsoft.Insights/dataCollectionRules',variables('rule'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Insights/dataCollectionRules',variables('rule'))]"
+      ],
+      "properties": {
+        "principalId": "[parameters('exporterPrincipalId')]",
+        "principalType": "ServicePrincipal",
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions','3913510d-42f4-4e42-8a64-420c390055eb')]"
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "careops-http-source-reader-np",
+      "subscriptionId": "[parameters('sourceSubscriptionId')]",
+      "resourceGroup": "[parameters('sourceResourceGroup')]",
+      "properties": {
+        "mode": "Incremental",
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "parameters": {
+          "component": {
+            "value": "[parameters('sourceComponentName')]"
+          },
+          "principal": {
+            "value": "[parameters('exporterPrincipalId')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "component": {
+              "type": "string"
+            },
+            "principal": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2022-04-01",
+              "name": "[guid(resourceId('Microsoft.Insights/components',parameters('component')),parameters('principal'),'security-http-reader')]",
+              "scope": "[resourceId('Microsoft.Insights/components',parameters('component'))]",
+              "properties": {
+                "principalId": "[parameters('principal')]",
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions','43d0d8ad-25c7-4714-9337-8ba259a9fe05')]"
+              }
+            }
+          ]
+        }
+      },
+      "condition": "[parameters('includeFoundation')]"
+    }
+  ],
+  "outputs": {
+    "ruleId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Insights/dataCollectionRules',variables('rule'))]"
+    },
+    "immutableId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Insights/dataCollectionRules',variables('rule')),'2024-03-11').immutableId]"
+    },
+    "ingestionEndpoint": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Insights/dataCollectionRules',variables('rule')),'2024-03-11').endpoints.logsIngestion]"
+    }
+  }
+}

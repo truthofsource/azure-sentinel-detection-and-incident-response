@@ -1,0 +1,33 @@
+name: Manual local contracts
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.15.8'
+          terraform_wrapper: false
+      - run: npm ci --ignore-scripts
+      - run: npm test
+      - run: python -B -m unittest discover -s tests -v
+      - run: python -B -m unittest discover -s scripts -p 'test_*.py' -v
+      - run: python -B scripts/export_queries.py
+      - run: python -B -m lab.demo
+      - run: python -B scripts/review_publication.py
+      - run: terraform -chdir=infra init -backend=false -input=false
+      - run: terraform -chdir=infra fmt -check -recursive
+      - run: terraform -chdir=infra validate
+      - run: terraform -chdir=infra test
