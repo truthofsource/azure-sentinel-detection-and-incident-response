@@ -128,7 +128,7 @@ Set `INGESTION_URL` privately to `https://YOUR_LOGS_INGESTION_HOST/dataCollectio
 
 **Where:** Workspace Logs / Microsoft Sentinel hunting.
 
-Run the query below after allowing for ingestion delay. If empty, inspect the DCR stream/schema, target table, identity permission, endpoint and actual request outcome; do not repeatedly resubmit a batch to make a count appear.
+Run the query below after allowing for ingestion delay. If empty, inspect the DCR stream/schema, target table, identity permission, endpoint and actual request outcome; do not repeatedly resubmit a batch to make a count appear. Compare batch.json TimeGenerated with the inspection query window before diagnosing missing ingestion. Preserve the original batch IDs/timestamps on a retry; widen a read-only inspection window when appropriate instead of regenerating events to manufacture an alert.
 
 ```kusto
 MyAppSecurity_CL
