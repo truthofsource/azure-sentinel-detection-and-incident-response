@@ -44,6 +44,19 @@ This project draws on an implemented Azure workforce platform. The public source
 
 ## Step by Step
 
+Build an independent version with the [reader-operated walkthrough](docs/BUILD-YOUR-OWN.md). It gives prerequisites, working locations, numbered actions, source-derived commands, expected results, verification and cleanup.
+
+For this project, your working starting point is [`tests/test_detection.py`](tests/test_detection.py). Expected scope: Local collector/detection decisions and generated queries, not new workspace ingestion or incidents.
+
+1. **Create your own workspace.** Copy the project and record the source version before editing.
+2. **Prepare and run the baseline.** Use the documented runtimes and selected dependencies, then run the local checks.
+3. **Make your own change.** Edit a project-specific fixture, configuration or rule and rerun its positive and negative cases.
+4. **Verify and document your result.** Capture your own evidence and distinguish a local example from a live integration.
+5. **Extend and close out deliberately.** Plan any independent cloud work separately and clean up only what you created.
+
+<details>
+<summary>How the underlying platform process works</summary>
+
 1. **Choose useful application evidence.** Record selected denied or unavailable API responses with their original time and stable identifier. Exclude tokens, request bodies and employee contents from this projection.
 
 2. **Deliver it to the security workspace.** Read mature source records using managed identity and save pending work before sending it. Keep the saved position and any unresolved batch when a request fails.
@@ -55,6 +68,8 @@ This project draws on an implemented Azure workforce platform. The public source
 5. **Check notification and collector health separately.** Distinguish a generated incident, a provider-accepted message, actual receipt and human action. Use heartbeat, checkpoint age and pending state to detect problems in the collection path.
 
 6. **Observe before tuning.** Review normal volume, duplicates, late data, analyst workload and posted costs over time. Change thresholds or scale only when evidence justifies the tradeoff.
+
+</details>
 
 ## Architecture
 
