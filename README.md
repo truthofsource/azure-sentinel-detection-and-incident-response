@@ -44,7 +44,7 @@ This project draws on an implemented Azure workforce platform. The public source
 
 ## Step by Step
 
-Build an independent version with the [reader-operated walkthrough](docs/BUILD-YOUR-OWN.md). It gives prerequisites, working locations, numbered actions, source-derived commands, expected results, verification and cleanup.
+Build an independent version with the [step-by-step build guide](docs/BUILD-YOUR-OWN.md). It gives prerequisites, working locations, numbered actions, source-derived commands, expected results, verification and cleanup.
 
 For this project, your working starting point is [`tests/test_detection.py`](tests/test_detection.py). Expected scope: Local collector/detection decisions and generated queries, not new workspace ingestion or incidents.
 
