@@ -16,15 +16,14 @@ A separate five-minute collector now selects existing operational records and se
 
 The fields are original event time, stable event ID, schema, environment, source resource, source kind, event kind, outcome, reason, operation and authentication category. Raw console messages, message identifiers, recipients, URLs, IPs, employee records, backup contents and credentials are excluded. Stable hashes support correlation; they do not establish actor identity or full anonymization.
 
-```mermaid
-flowchart LR
-  Sources[Selected operational records] --> Reader[API managed identity: exact-source query]
-  Reader <--> State[Separate private leased checkpoint and pending batch]
-  Reader --> DCR[Operations DCR and ingestion endpoint]
-  DCR --> Table[Hub: CareOpsSecurityOperations_CL]
-  Table --> Review[Investigation queries]
-  Review -. future reviewed scope .-> Rules[New operations rules: not activated]
-```
+1. **Selected operational records** → **API managed identity: exact-source query**.
+2. API managed identity: exact-source query exchanges information with Separate private leased checkpoint and pending batch.
+3. **API managed identity: exact-source query** → **Operations DCR and ingestion endpoint**.
+4. **Operations DCR and ingestion endpoint** → **Hub: CareOpsSecurityOperations_CL**.
+5. **Hub: CareOpsSecurityOperations_CL** → **Investigation queries**.
+6. Investigation queries has a conditional/reference connection to New operations rules: not activated (future reviewed scope).
+
+[View the illustrated project overview](diagrams/architecture.svg).
 
 ## How to investigate
 

@@ -18,7 +18,7 @@ for path in files:
     assert not path.is_symlink(), relative
     assert path.suffix.lower() not in ('.pem', '.key', '.pfx', '.tfstate', '.tfplan', '.eml', '.docx'), relative
     if path.suffix.lower() in ('.png', '.jpg', '.jpeg'):
-        assert relative.parts[:2] == ('docs', 'images'), relative
+        assert relative.parts[:2] == ('docs', 'diagrams'), relative
         continue
     text = path.read_text(encoding='utf-8-sig')
     for subscription in re.findall(r'/subscriptions/([a-f0-9-]{36})', text, re.I):
@@ -36,7 +36,7 @@ for path in files:
             assert resolved.is_relative_to(ROOT) and resolved.exists(), (relative, target)
             links += 1
 assert (ROOT / 'docs/validation-results.json').is_file()
-assert (ROOT / 'docs/images/01-overview.png').is_file()
+assert (ROOT / 'docs/diagrams/architecture.png').is_file()
 assert len(list((ROOT / 'queries').glob('*.kql'))) == 4
 print(json.dumps({'filesReviewed': len(files), 'relativeLinks': links,
                   'exampleSubscriptionsOnly': True, 'privateKeyJwtAndAccountKeyGuards': True,
